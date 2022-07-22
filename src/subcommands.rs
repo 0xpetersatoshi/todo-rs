@@ -48,7 +48,13 @@ pub struct DeleteCommand {
 
 impl DeleteCommand {
     pub fn run(&self, connection: PgConnection) {
-        let name = get_todo(&connection, self.todo_id);
+        let name = match get_todo(&connection, self.todo_id) {
+            Ok(n) => n,
+            Err(e) => {
+                println!("Error deleting todo id={}: {}", self.todo_id, e);
+                return
+            },
+        };
         self.delete(&connection);
         println!("Deleted todo: {}", name)
     }
@@ -73,7 +79,13 @@ pub struct UpdateCommand {
 
 impl UpdateCommand {
     pub fn run(&self, connection: PgConnection) {
-        let old_name = get_todo(&connection, self.todo_id);
+        let old_name = match get_todo(&connection, self.todo_id) {
+            Ok(n) => n,
+            Err(e) => {
+                println!("Error updating todo id={}: {}", self.todo_id, e);
+                return ;
+            },
+        };
         self.update(&connection);
         println!("Updated todo from '{}' to '{}'", old_name, self.name)
     }
@@ -97,7 +109,13 @@ pub struct CompleteCommand {
 impl CompleteCommand {
     pub fn run(&self, connection: PgConnection) {
         self.update(&connection);
-        let name = get_todo(&connection, self.todo_id);
+        let name = match get_todo(&connection, self.todo_id) {
+            Ok(n) => n,
+            Err(e) => {
+                println!("Error trying to complete todo id={}: {}", self.todo_id, e);
+                return ;
+            },
+        };
         println!("Completed todo: {}", name)
     }
 
@@ -136,16 +154,9 @@ impl ListCommand {
     }
 }
 
-fn get_todo(connection: &PgConnection, todo_id: i32) -> String {
-    let result: Result<String, diesel::result::Error> = todos
+fn get_todo(connection: &PgConnection, todo_id: i32) -> Result<String, diesel::result::Error> {
+    todos
         .filter(id.eq(todo_id))
         .select(todo_name)
-        .first(connection);
-
-    let name = match result {
-        Ok(n) => n,
-        Err(e) => format!("Error getting todo id={}: {:?}", todo_id, e),
-    };
-
-    name
+        .first(connection)
 }
