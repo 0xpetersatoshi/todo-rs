@@ -111,12 +111,16 @@ impl CompleteCommand {
 
 /// List existing todos
 #[derive(Parser, Debug)]
-pub struct ListCommand {}
+pub struct ListCommand {
+    /// Show completed todos
+    #[clap(short, long, takes_value=false)]
+    pub completed: bool
+}
 
 impl ListCommand {
     pub fn run(&self, connection: PgConnection) {
         let results = todos
-            .filter(is_complete.eq(false))
+            .filter(is_complete.eq(self.completed))
             .load::<Todo>(&connection)
             .expect("Error loading todos");
 
