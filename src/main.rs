@@ -30,9 +30,7 @@ fn main() {
             println!("running the Update subcommand")
         }
 
-        Commands::Complete(command) => {
-            println!("running the Complete subcommand")
-        }
+        Commands::Complete(command) => command.run(connection),
 
         Commands::List(command) => command.run(connection),
     }

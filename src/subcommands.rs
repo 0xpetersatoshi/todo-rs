@@ -57,9 +57,23 @@ pub struct UpdateCommand {
 /// Complete an existing todo
 #[derive(Parser, Debug)]
 pub struct CompleteCommand {
-    /// Name of the todo to complete
-    #[clap(short, long, value_parser)]
-    pub name: String,
+    /// ID of the todo to complete
+    #[clap(short = 'i', long = "id", value_parser)]
+    pub todo_id: i32,
+}
+
+impl CompleteCommand {
+    pub fn run(&self, connection: PgConnection) {
+        self.update(&connection, self.todo_id);
+        println!("Completed todo id={}", self.todo_id)
+    }
+
+    fn update<'a>(&self, connection: &PgConnection, todo_id: i32) {
+        diesel::update(todos.find(todo_id))
+            .set(is_complete.eq(true))
+            .execute(connection)
+            .expect(&format!("Unable to find todo with id={}", todo_id));
+    }
 }
 
 /// List existing todos
@@ -80,7 +94,7 @@ impl ListCommand {
 
         println!("Displaying {} todos", results.len());
         for result in results {
-            println!("todo: {}", result.todo_name)
+            println!("(id={}): {}", result.id, result.todo_name)
         }
     }
 }
