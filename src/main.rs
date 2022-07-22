@@ -22,9 +22,7 @@ fn main() {
     match args.commands {
         Commands::Add(command) => command.run(connection),
 
-        Commands::Delete(command) => {
-            println!("running the Delete subcommand")
-        }
+        Commands::Delete(command) => command.run(connection),
 
         Commands::Update(command) => command.run(connection),
 

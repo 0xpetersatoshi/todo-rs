@@ -41,9 +41,23 @@ impl AddCommand {
 /// Delete an existing todo
 #[derive(Parser, Debug)]
 pub struct DeleteCommand {
-    /// Name of the todo to delete
-    #[clap(short, long, value_parser)]
-    pub name: String,
+    /// ID of the todo to delete
+    #[clap(short = 'i', long = "id", value_parser)]
+    pub todo_id: i32,
+}
+
+impl DeleteCommand {
+    pub fn run(&self, connection: PgConnection) {
+        let name = get_todo(&connection, self.todo_id);
+        self.delete(&connection);
+        println!("Deleted todo: {}", name)
+    }
+
+    fn delete(&self, connection: &PgConnection) {
+        diesel::delete(todos.find(self.todo_id))
+            .execute(connection)
+            .expect("Error deleting todo");
+    }
 }
 
 /// Update an existing todo
