@@ -15,7 +15,7 @@ pub fn establish_connection() -> PgConnection {
     embed_migrations!();
     match embedded_migrations::run(&connection) {
         Err(e) => println!("Error running migrations: {:?}", e),
-        _ => ()
+        _ => (),
     }
 
     connection

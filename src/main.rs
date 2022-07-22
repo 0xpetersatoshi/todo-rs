@@ -11,8 +11,8 @@ mod models;
 mod schema;
 mod subcommands;
 
-use crate::subcommands::Commands;
 use crate::database::establish_connection;
+use crate::subcommands::Commands;
 use clap::Parser;
 
 fn main() {
@@ -20,10 +20,7 @@ fn main() {
     let args = cli::Args::parse();
 
     match args.commands {
-        Commands::Add(command) => {
-            println!("running the Add subcommand");
-            command.run(connection)
-        }
+        Commands::Add(command) => command.run(connection),
 
         Commands::Delete(command) => {
             println!("running the Delete subcommand")
@@ -37,9 +34,6 @@ fn main() {
             println!("running the Complete subcommand")
         }
 
-        Commands::List(command) => {
-            println!("running the List subcommand");
-            command.run(connection)
-        }
+        Commands::List(command) => command.run(connection),
     }
 }

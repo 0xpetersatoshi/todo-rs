@@ -1,6 +1,6 @@
 use crate::models::*;
-use crate::schema::todos::dsl::*;
 use crate::schema::todos;
+use crate::schema::todos::dsl::*;
 use clap::{Parser, Subcommand};
 use diesel::prelude::*;
 use diesel::{pg::PgConnection, QueryDsl};
@@ -29,9 +29,7 @@ impl AddCommand {
     }
 
     fn create_todo<'a>(&self, connection: &PgConnection, name: &'a str) {
-        let new_todo = NewTodo {
-            todo_name: name,
-        };
+        let new_todo = NewTodo { todo_name: name };
 
         diesel::insert_into(todos::table)
             .values(&new_todo)
