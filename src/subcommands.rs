@@ -65,7 +65,8 @@ pub struct CompleteCommand {
 impl CompleteCommand {
     pub fn run(&self, connection: PgConnection) {
         self.update(&connection, self.todo_id);
-        println!("Completed todo id={}", self.todo_id)
+        let name = get_todo(&connection, self.todo_id);
+        println!("Completed todo: {}", name)
     }
 
     fn update<'a>(&self, connection: &PgConnection, todo_id: i32) {
@@ -97,4 +98,18 @@ impl ListCommand {
             println!("(id={}): {}", result.id, result.todo_name)
         }
     }
+}
+
+fn get_todo(connection: &PgConnection, todo_id: i32) -> String {
+    let result: Result<String, diesel::result::Error> = todos
+        .filter(id.eq(todo_id))
+        .select(todo_name)
+        .first(connection);
+
+    let name = match result {
+        Ok(n) => n,
+        Err(e) => format!("Error getting todo id={}: {:?}", todo_id, e),
+    };
+
+    name
 }
