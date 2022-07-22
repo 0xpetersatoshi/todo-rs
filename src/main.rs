@@ -1,4 +1,12 @@
+#[macro_use]
+extern crate diesel;
+
+#[macro_use]
+extern crate diesel_migrations;
+extern crate dotenv;
+
 mod cli;
+mod database;
 mod subcommands;
 
 use crate::subcommands::Commands;
