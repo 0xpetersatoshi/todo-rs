@@ -1,5 +1,6 @@
-use crate::models::Todos;
+use crate::models::*;
 use crate::schema::todos::dsl::*;
+use crate::schema::todos;
 use clap::{Parser, Subcommand};
 use diesel::prelude::*;
 use diesel::{pg::PgConnection, QueryDsl};
@@ -23,7 +24,19 @@ pub struct AddCommand {
 
 impl AddCommand {
     pub fn run(&self, connection: PgConnection) {
-        println!("args: {}", self.name)
+        self.create_todo(&connection, &self.name);
+        println!("new todo added!")
+    }
+
+    fn create_todo<'a>(&self, connection: &PgConnection, name: &'a str) {
+        let new_todo = NewTodo {
+            todo_name: name,
+        };
+
+        diesel::insert_into(todos::table)
+            .values(&new_todo)
+            .execute(connection)
+            .expect("Error adding new todo");
     }
 }
 
@@ -58,13 +71,13 @@ pub struct ListCommand {}
 impl ListCommand {
     pub fn run(&self, connection: PgConnection) {
         let results = todos
-            .filter(is_complete.eq(true))
+            .filter(is_complete.eq(false))
             .load::<Todos>(&connection)
             .expect("Error loading todos");
 
         if results.len() == 0 {
             println!("No todos to display!");
-            return ;
+            return;
         }
 
         println!("Displaying {} todos", results.len());
