@@ -84,7 +84,7 @@ impl ListCommand {
     pub fn run(&self, connection: PgConnection) {
         let results = todos
             .filter(is_complete.eq(false))
-            .load::<Todos>(&connection)
+            .load::<Todo>(&connection)
             .expect("Error loading todos");
 
         if results.len() == 0 {
