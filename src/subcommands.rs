@@ -96,16 +96,16 @@ pub struct CompleteCommand {
 
 impl CompleteCommand {
     pub fn run(&self, connection: PgConnection) {
-        self.update(&connection, self.todo_id);
+        self.update(&connection);
         let name = get_todo(&connection, self.todo_id);
         println!("Completed todo: {}", name)
     }
 
-    fn update<'a>(&self, connection: &PgConnection, todo_id: i32) {
-        diesel::update(todos.find(todo_id))
+    fn update(&self, connection: &PgConnection) {
+        diesel::update(todos.find(self.todo_id))
             .set(is_complete.eq(true))
             .execute(connection)
-            .expect(&format!("Unable to find todo with id={}", todo_id));
+            .expect(&format!("Unable to find todo with id={}", self.todo_id));
     }
 }
 
