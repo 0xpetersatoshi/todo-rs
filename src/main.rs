@@ -7,17 +7,22 @@ extern crate dotenv;
 
 mod cli;
 mod database;
+mod models;
+mod schema;
 mod subcommands;
 
 use crate::subcommands::Commands;
+use crate::database::establish_connection;
 use clap::Parser;
 
 fn main() {
+    let connection = establish_connection();
     let args = cli::Args::parse();
 
     match args.commands {
         Commands::Add(command) => {
             println!("running the Add subcommand");
+            command.run(connection)
         }
 
         Commands::Delete(command) => {
@@ -33,7 +38,8 @@ fn main() {
         }
 
         Commands::List(command) => {
-            println!("running the List subcommand")
+            println!("running the List subcommand");
+            command.run(connection)
         }
     }
 }
