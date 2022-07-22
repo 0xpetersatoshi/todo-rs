@@ -52,8 +52,8 @@ impl DeleteCommand {
             Ok(n) => n,
             Err(e) => {
                 println!("Error deleting todo id={}: {}", self.todo_id, e);
-                return
-            },
+                return;
+            }
         };
         self.delete(&connection);
         println!("Deleted todo: {}", name)
@@ -83,8 +83,8 @@ impl UpdateCommand {
             Ok(n) => n,
             Err(e) => {
                 println!("Error updating todo id={}: {}", self.todo_id, e);
-                return ;
-            },
+                return;
+            }
         };
         self.update(&connection);
         println!("Updated todo from '{}' to '{}'", old_name, self.name)
@@ -113,8 +113,8 @@ impl CompleteCommand {
             Ok(n) => n,
             Err(e) => {
                 println!("Error trying to complete todo id={}: {}", self.todo_id, e);
-                return ;
-            },
+                return;
+            }
         };
         println!("Completed todo: {}", name)
     }
