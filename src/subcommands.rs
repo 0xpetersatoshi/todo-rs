@@ -49,9 +49,27 @@ pub struct DeleteCommand {
 /// Update an existing todo
 #[derive(Parser, Debug)]
 pub struct UpdateCommand {
-    /// Name of the todo to update
+    /// ID of the todo to update
+    #[clap(short = 'i', long = "id", value_parser)]
+    pub todo_id: i32,
+    /// New name for todo item
     #[clap(short, long, value_parser)]
     pub name: String,
+}
+
+impl UpdateCommand {
+    pub fn run(&self, connection: PgConnection) {
+        let old_name = get_todo(&connection, self.todo_id);
+        self.update(&connection);
+        println!("Updated todo from '{}' to '{}'", old_name, self.name)
+    }
+
+    fn update(&self, connection: &PgConnection) {
+        diesel::update(todos.find(self.todo_id))
+            .set(todo_name.eq(&self.name))
+            .execute(connection)
+            .expect(&format!("Unable to find todo with id={}", self.todo_id));
+    }
 }
 
 /// Complete an existing todo

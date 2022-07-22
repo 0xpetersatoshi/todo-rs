@@ -26,9 +26,7 @@ fn main() {
             println!("running the Delete subcommand")
         }
 
-        Commands::Update(command) => {
-            println!("running the Update subcommand")
-        }
+        Commands::Update(command) => command.run(connection),
 
         Commands::Complete(command) => command.run(connection),
 
