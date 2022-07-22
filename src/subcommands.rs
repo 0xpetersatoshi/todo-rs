@@ -113,8 +113,8 @@ impl CompleteCommand {
 #[derive(Parser, Debug)]
 pub struct ListCommand {
     /// Show completed todos
-    #[clap(short, long, takes_value=false)]
-    pub completed: bool
+    #[clap(short, long, takes_value = false)]
+    pub completed: bool,
 }
 
 impl ListCommand {
